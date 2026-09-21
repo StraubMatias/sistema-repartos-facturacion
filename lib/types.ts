@@ -80,7 +80,7 @@ export type FormaPago = (typeof FORMAS_PAGO)[number];
 export const ETIQUETA_FORMA_PAGO: Record<FormaPago, string> = {
   contado: "Contado",
   cuenta_corriente: "Cuenta corriente",
-  debito: "Débito",
+  debito: "Transferencia",
   cheque: "Cheque",
 };
 

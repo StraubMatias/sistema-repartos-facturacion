@@ -17,7 +17,7 @@ import { RemitoModal } from "@/app/components/repartos/RemitoModal";
  * Ya no hay estado ni casilla de completado: cada fila apenas muestra los
  * datos del reparto y la forma de pago (cobrado / por cobrar) se elige inline.
  * El monto se pinta en rojo si la forma es "Por cobrar" y en verde cuando ya
- * tiene forma de pago cargada (contado, cuenta corriente, débito o cheque).
+ * tiene forma de pago cargada (contado, cuenta corriente, transferencia o cheque).
  */
 export function RepartosTablaBusqueda({ repartos }: { repartos: Reparto[] }) {
   const [consulto, setConsulto] = useState("");
