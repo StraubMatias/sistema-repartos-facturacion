@@ -4,7 +4,8 @@ import { obtenerRemitoCompleto } from "@/lib/data/remitos";
 import { formatCuit, formatFecha, formatPesos } from "@/lib/types";
 import { ButtonLink } from "@/app/components/ui/form";
 import { Card, PageHeader } from "@/app/components/ui/display";
-import { RemitoDeleteButton } from "@/app/components/remitos/RemitoDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarRemitoAction } from "@/app/actions/remitos";
 import { ImprimirButton } from "@/app/components/remitos/ImprimirButton";
 
 export const metadata = { title: "Remito" };
@@ -63,7 +64,12 @@ export default async function DetalleRemitoPage({
         </div>
 
         <Card className="mb-6 flex flex-wrap items-end gap-x-8 gap-y-4 p-4">
-          <RemitoDeleteButton id={remito.id} />
+          <ConfirmDeleteButton
+            action={eliminarRemitoAction}
+            id={remito.id}
+            confirmMessage="¿Eliminar este remito y sus líneas?"
+            label="Eliminar remito"
+          />
         </Card>
       </div>
 

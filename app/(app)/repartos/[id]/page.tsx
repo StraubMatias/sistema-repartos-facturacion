@@ -16,7 +16,8 @@ import {
   Th,
 } from "@/app/components/ui/display";
 import { AsignarRemitosForm } from "@/app/components/repartos/AsignarRemitosForm";
-import { RepartoDeleteButton } from "@/app/components/repartos/RepartoDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarRepartoAction } from "@/app/actions/repartos";
 
 export const metadata = { title: "Reparto" };
 
@@ -151,7 +152,12 @@ export default async function DetalleRepartoPage({
           )}
 
           <div className="mt-5 flex flex-wrap items-end gap-x-8 gap-y-4 border-t border-zinc-100 pt-4">
-            <RepartoDeleteButton id={reparto.id} />
+            <ConfirmDeleteButton
+              action={eliminarRepartoAction}
+              id={reparto.id}
+              confirmMessage="¿Eliminar este reparto? Los remitos asignados quedarán sin reparto."
+              label="Eliminar reparto"
+            />
           </div>
         </Card>
 

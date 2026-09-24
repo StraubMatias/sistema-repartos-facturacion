@@ -26,13 +26,7 @@ export function proxy(request: NextRequest) {
   const sesion = verificarCookieSesion(cookie);
 
   if (sesion) {
-    // Usuario autenticado: permitir acceso
-    // Agregar header para debugging en desarrollo
-    const response = NextResponse.next();
-    if (process.env.NODE_ENV !== "production") {
-      response.headers.set("x-auth-debug", "sesion-valida");
-    }
-    return response;
+    return NextResponse.next();
   }
 
   const url = new URL(request.url);

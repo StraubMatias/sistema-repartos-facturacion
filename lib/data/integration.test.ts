@@ -16,12 +16,7 @@ import {
 } from "@/lib/data/clientes";
 import {
   crearGasto,
-  listarGastos,
-  listarGastosDelDia,
-  listarGastosDelMes,
   listarGastosDelMesConTotal,
-  totalGastos,
-  totalGastosDelMes,
 } from "@/lib/data/gastos";
 import {
   actualizarFormaPagoReparto,
@@ -569,8 +564,9 @@ describe("flujo gastos", () => {
       montoCentavos: 2000,
     });
 
-    expect(await totalGastos()).toBe(17000);
-    expect(await listarGastos()).toHaveLength(2);
+    const sept = await listarGastosDelMesConTotal("2026-09");
+    expect(sept.totalCentavos).toBe(17000);
+    expect(sept.gastos).toHaveLength(2);
   });
 
   it("filtra gastos por mes (YYYY-MM)", async () => {
@@ -593,27 +589,16 @@ describe("flujo gastos", () => {
       montoCentavos: 2000,
     });
 
-    expect(await totalGastosDelMes("2026-09")).toBe(4000);
-    expect(await totalGastosDelMes("2026-08")).toBe(2000);
-    expect(await totalGastosDelMes("2026-07")).toBe(0);
-
-    // La consulta unificada (lista + total en una ventana) debe coincidir con
-    // las funciones separadas.
     const septConTotal = await listarGastosDelMesConTotal("2026-09");
     expect(septConTotal.totalCentavos).toBe(4000);
     expect(septConTotal.gastos).toHaveLength(2);
     expect(septConTotal.gastos[0].descripcion).toBe("Septiembre 1");
+    expect(septConTotal.gastos[1].descripcion).toBe("Septiembre 2");
 
+    expect((await listarGastosDelMesConTotal("2026-08")).totalCentavos).toBe(2000);
     const vacioConTotal = await listarGastosDelMesConTotal("2026-07");
     expect(vacioConTotal.totalCentavos).toBe(0);
     expect(vacioConTotal.gastos).toHaveLength(0);
-
-    const septiembre = await listarGastosDelMes("2026-09");
-    expect(septiembre).toHaveLength(2);
-    // Los más recientes primero.
-    expect(septiembre[0].descripcion).toBe("Septiembre 1");
-    expect(septiembre[1].descripcion).toBe("Septiembre 2");
-    expect(await listarGastosDelMes("2026-07")).toHaveLength(0);
   });
 
   it("lista los gastos de UN día (Hoja de Ruta)", async () => {
@@ -636,11 +621,11 @@ describe("flujo gastos", () => {
       montoCentavos: 8000,
     });
 
-    const delDia13 = await listarGastosDelDia("2026-09-13");
+    const delDia13 = (await obtenerHojaDeRutaDia("2026-09-13")).gastos;
     expect(delDia13).toHaveLength(2);
     expect(delDia13.reduce((t, g) => t + g.montoCentavos, 0)).toBe(18000);
-    expect(await listarGastosDelDia("2026-09-14")).toHaveLength(1);
-    expect(await listarGastosDelDia("2026-09-20")).toHaveLength(0);
+    expect((await obtenerHojaDeRutaDia("2026-09-14")).gastos).toHaveLength(1);
+    expect((await obtenerHojaDeRutaDia("2026-09-20")).gastos).toHaveLength(0);
   });
 });
 

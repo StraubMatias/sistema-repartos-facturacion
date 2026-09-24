@@ -59,27 +59,14 @@ const SQL_SELECCION_REPARTO = `
  * Lista repartos con el valor total (remitos asignados + mercadería directa)
  * y los remitos asociados (id + número) para mostrar en la columna "Remitos".
  *
- * Orden: por fecha (más reciente primero) y después por id. En la hoja de ruta
- * diaria se usa `listarRepartosDelDia`, que filtra por fecha.
+ * Orden: por fecha (más reciente primero) y después por id. La hoja de ruta
+ * diaria usa `obtenerHojaDeRutaDia`.
  */
 export async function listarRepartos(): Promise<Reparto[]> {
   return consultarRepartosCompletos(
     `${SQL_SELECCION_REPARTO}
      GROUP BY rp.id
      ORDER BY rp.fecha DESC, rp.id DESC`,
-  );
-}
-
-/** Los repartos de una fecha (la "hoja de ruta" de ese día). Se ordenan para
- *  que los que todavía no se cobraron («Por cobrar») queden siempre arriba y
- *  los cobrados abajo; dentro de cada grupo se mantiene el orden de carga. */
-export async function listarRepartosDelDia(fecha: string): Promise<Reparto[]> {
-  return consultarRepartosCompletos(
-    `${SQL_SELECCION_REPARTO}
-     WHERE rp.fecha = ?
-     GROUP BY rp.id
-     ORDER BY rp.cobrado ASC, rp.id ASC`,
-    [fecha],
   );
 }
 
@@ -263,42 +250,6 @@ export interface ResumenDia {
   cobradoCentavos: number;
   /** Lo que todavía falta cobrar del día. */
   faltaCobrarCentavos: number;
-}
-
-/** Valor de cada reparto del día, para sumar cobrado / por cobrar en SQL (una sola pasada). */
-const SQL_VALOR_POR_REPARTO_DEL_DIA = `
-  SELECT rp.id, rp.cobrado,
-         ((SELECT COALESCE(SUM(ri.cantidad * ri.precio_unitario_centavos), 0)
-           FROM remitos rt
-           JOIN remito_items ri ON ri.remito_id = rt.id
-           WHERE rt.reparto_id = rp.id)
-          + (SELECT COALESCE(SUM(mi.cantidad * mi.precio_unitario_centavos), 0)
-             FROM reparto_items mi
-             WHERE mi.reparto_id = rp.id)) AS valor_centavos
-  FROM repartos rp
-  WHERE rp.fecha = ?
-`;
-
-/** Totales del día: cuánto se cobró y cuánto falta cobrar, por separado. */
-export async function resumenDia(fecha: string): Promise<ResumenDia> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    `SELECT COUNT(*) AS cantidad_total,
-            COALESCE(SUM(CASE WHEN cobrado = 1 THEN 1 ELSE 0 END), 0) AS cantidad_cobrados,
-            COALESCE(SUM(valor_centavos), 0) AS total_centavos,
-            COALESCE(SUM(CASE WHEN cobrado = 1 THEN valor_centavos ELSE 0 END), 0) AS cobrado_centavos,
-            COALESCE(SUM(CASE WHEN cobrado = 1 THEN 0 ELSE valor_centavos END), 0) AS falta_centavos
-     FROM (${SQL_VALOR_POR_REPARTO_DEL_DIA}) AS dia`,
-    [fecha],
-  );
-  const f = resultado.rows[0] as Fila;
-  return {
-    cantidadTotal: Number(f.cantidad_total ?? 0),
-    cantidadCobrados: Number(f.cantidad_cobrados ?? 0),
-    totalCentavos: Number(f.total_centavos ?? 0),
-    cobradoCentavos: Number(f.cobrado_centavos ?? 0),
-    faltaCobrarCentavos: Number(f.falta_centavos ?? 0),
-  };
 }
 
 /** Repartos de un cliente para su ficha, con la misma forma que el listado

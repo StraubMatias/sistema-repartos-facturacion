@@ -97,6 +97,7 @@ export async function eliminarGastoAction(
   }
 
   revalidatePath("/gastos");
+  revalidatePath("/");
   updateTag("gastos");
   return { error: null };
 }

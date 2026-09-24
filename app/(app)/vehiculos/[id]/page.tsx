@@ -9,7 +9,8 @@ import {
   CardHeader,
   PageHeader,
 } from "@/app/components/ui/display";
-import { VehiculoDeleteButton } from "@/app/components/vehiculos/VehiculoDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarVehiculoAction } from "@/app/actions/vehiculos";
 
 export const metadata = { title: "Detalle de vehículo" };
 
@@ -111,11 +112,11 @@ export default async function DetalleVehiculoPage({
 
       <div className="mt-6 flex justify-end">
         <Card className="p-4">
-          <VehiculoDeleteButton
+          <ConfirmDeleteButton
+            action={eliminarVehiculoAction}
             id={vehiculo.id}
-            nombre={vehiculo.nombre}
-            variant="danger"
-            texto="Eliminar vehículo"
+            confirmMessage={`¿Eliminar el vehículo "${vehiculo.nombre}"? Esta acción es definitiva.`}
+            label="Eliminar vehículo"
           />
         </Card>
       </div>

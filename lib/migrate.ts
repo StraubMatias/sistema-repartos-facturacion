@@ -441,14 +441,3 @@ async function repararRepartoItems(
   ];
   await db.batch(statements);
 }
-
-/** Devuelve la lista de tablas existentes (auxiliar de diagnóstico). */
-export async function listarTablas(): Promise<string[]> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name",
-  );
-  return resultado.rows.map(
-    (fila) => String((fila as Record<string, unknown>).name),
-  );
-}

@@ -14,7 +14,8 @@ import {
   Td,
   Th,
 } from "@/app/components/ui/display";
-import { ClienteDeleteButton } from "@/app/components/clientes/ClienteDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarClienteAction } from "@/app/actions/clientes";
 import { FormaPagoSelect } from "@/app/components/repartos/FormaPagoSelect";
 import { RemitoModal } from "@/app/components/repartos/RemitoModal";
 
@@ -196,7 +197,12 @@ export default async function DetalleClientePage({
 
       <div className="flex justify-end">
         <Card className="p-4">
-          <ClienteDeleteButton id={cliente.id} nombre={cliente.nombre} />
+          <ConfirmDeleteButton
+            action={eliminarClienteAction}
+            id={cliente.id}
+            confirmMessage={`¿Eliminar a "${cliente.nombre}"? Esta acción es definitiva.`}
+            label="Eliminar cliente"
+          />
         </Card>
       </div>
     </div>

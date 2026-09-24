@@ -3,7 +3,8 @@ import { obtenerVehiculo } from "@/lib/data/vehiculos";
 import { ButtonLink } from "@/app/components/ui/form";
 import { Card, PageHeader } from "@/app/components/ui/display";
 import { VehiculoEditForm } from "@/app/components/vehiculos/VehiculoEditForm";
-import { VehiculoDeleteButton } from "@/app/components/vehiculos/VehiculoDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarVehiculoAction } from "@/app/actions/vehiculos";
 
 export const metadata = { title: "Editar vehículo" };
 
@@ -41,10 +42,11 @@ export default async function EditarVehiculoPage({
           borrarlo.
         </p>
         <div className="mt-3">
-          <VehiculoDeleteButton
+          <ConfirmDeleteButton
+            action={eliminarVehiculoAction}
             id={vehiculo.id}
-            nombre={vehiculo.nombre}
-            variant="danger"
+            confirmMessage={`¿Eliminar el vehículo "${vehiculo.nombre}"? Esta acción es definitiva.`}
+            label="Eliminar vehículo"
           />
         </div>
       </Card>

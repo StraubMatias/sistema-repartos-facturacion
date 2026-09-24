@@ -3,7 +3,8 @@ import { obtenerCliente } from "@/lib/data/clientes";
 import { ButtonLink } from "@/app/components/ui/form";
 import { Card, PageHeader } from "@/app/components/ui/display";
 import { ClienteEditForm } from "@/app/components/clientes/ClienteEditForm";
-import { ClienteDeleteButton } from "@/app/components/clientes/ClienteDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarClienteAction } from "@/app/actions/clientes";
 
 export const metadata = { title: "Editar cliente" };
 
@@ -41,7 +42,12 @@ export default async function EditarClientePage({
           lista de clientes.
         </p>
         <div className="mt-3">
-          <ClienteDeleteButton id={cliente.id} nombre={cliente.nombre} />
+          <ConfirmDeleteButton
+            action={eliminarClienteAction}
+            id={cliente.id}
+            confirmMessage={`¿Eliminar a "${cliente.nombre}"? Esta acción es definitiva.`}
+            label="Eliminar cliente"
+          />
         </div>
       </Card>
     </div>

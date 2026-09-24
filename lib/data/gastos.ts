@@ -15,52 +15,6 @@ function mapearGasto(fila: FilaGasto): Gasto {
   };
 }
 
-/** Lista gastos, los más recientes primero. */
-export async function listarGastos(): Promise<Gasto[]> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    `SELECT id, fecha, categoria, descripcion, proveedor, monto_centavos, creado_en
-     FROM gastos
-     ORDER BY fecha DESC, id DESC`,
-  );
-  return resultado.rows.map((fila) => mapearGasto(fila as FilaGasto));
-}
-
-/** Total acumulado en centavos (útil para el resumen). */
-export async function totalGastos(): Promise<number> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    "SELECT COALESCE(SUM(monto_centavos), 0) AS total FROM gastos",
-  );
-  return Number((resultado.rows[0] as FilaGasto).total);
-}
-
-/** Lista los gastos de un mes (YYYY-MM), los más recientes primero. */
-export async function listarGastosDelMes(mes: string): Promise<Gasto[]> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    `SELECT id, fecha, categoria, descripcion, proveedor, monto_centavos, creado_en
-     FROM gastos
-     WHERE substr(fecha, 1, 7) = ?
-     ORDER BY fecha DESC, id DESC`,
-    [mes],
-  );
-  return resultado.rows.map((fila) => mapearGasto(fila as FilaGasto));
-}
-
-/** Lista los gastos de UN día (YYYY-MM-DD), del más reciente al más viejo. */
-export async function listarGastosDelDia(fecha: string): Promise<Gasto[]> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    `SELECT id, fecha, categoria, descripcion, proveedor, monto_centavos, creado_en
-     FROM gastos
-     WHERE fecha = ?
-     ORDER BY id DESC`,
-    [fecha],
-  );
-  return resultado.rows.map((fila) => mapearGasto(fila as FilaGasto));
-}
-
 export interface GastosDelMes {
   gastos: Gasto[];
   totalCentavos: number;
@@ -90,16 +44,6 @@ export async function listarGastosDelMesConTotal(
     gastos: filas.map((fila) => mapearGasto(fila)),
     totalCentavos,
   };
-}
-
-/** Total en centavos de los gastos de un mes (YYYY-MM). */
-export async function totalGastosDelMes(mes: string): Promise<number> {
-  const db = await getDb();
-  const resultado = await db.execute(
-    "SELECT COALESCE(SUM(monto_centavos), 0) AS total FROM gastos WHERE substr(fecha, 1, 7) = ?",
-    [mes],
-  );
-  return Number((resultado.rows[0] as FilaGasto).total);
 }
 
 export interface DatosNuevoGasto {

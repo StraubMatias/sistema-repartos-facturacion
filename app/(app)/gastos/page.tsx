@@ -23,7 +23,8 @@ import {
 } from "@/app/components/ui/display";
 import { ButtonLink } from "@/app/components/ui/form";
 import { GastoForm } from "@/app/components/gastos/GastoForm";
-import { GastoDeleteButton } from "@/app/components/gastos/GastoDeleteButton";
+import { ConfirmDeleteButton } from "@/app/components/ui/ConfirmDeleteButton";
+import { eliminarGastoAction } from "@/app/actions/gastos";
 
 export const metadata = { title: "Gastos" };
 
@@ -189,9 +190,14 @@ async function ContenidoGastos({
                         {formatPesos(gasto.montoCentavos)}
                       </Td>
                       <Td className="text-right">
-                        <GastoDeleteButton
+                        <ConfirmDeleteButton
+                          action={eliminarGastoAction}
                           id={gasto.id}
-                          descripcion={gasto.descripcion}
+                          confirmMessage={`¿Eliminar el gasto "${gasto.descripcion}"?`}
+                          label="Eliminar"
+                          pendingLabel="…"
+                          variant="ghost"
+                          formClassName=""
                         />
                       </Td>
                     </tr>

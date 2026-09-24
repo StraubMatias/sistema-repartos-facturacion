@@ -19,9 +19,9 @@ const securityHeaders = [
       "default-src 'self'; " +
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " + // 'unsafe-eval' para desarrollo de Next.js
       "style-src 'self' 'unsafe-inline'; " +
-      "font-src 'self' https://fonts.gstatic.com; " +
-      "img-src 'self' data: blob: https:; " +
-      "connect-src 'self' https://api.vercel.app; " + // para Vercel analytics si se usa
+      "font-src 'self'; " +
+      "img-src 'self' data: blob:; " +
+      "connect-src 'self'; " +
       "frame-ancestors 'none';",
   },
 ];
